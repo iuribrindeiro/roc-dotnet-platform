@@ -1,0 +1,20 @@
+﻿<?xml version="1.0"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
+    <DnneAdditionalIncludeDirectories>/Users/iuribrindeiro/repos/roc-app/platform</DnneAdditionalIncludeDirectories>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="DNNE" Version="2.0.6"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="./roc.h">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

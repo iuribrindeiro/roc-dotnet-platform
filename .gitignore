@@ -1,0 +1,5 @@
+platform/obj
+platform/bin
+
+platform/.idea
+main
