@@ -7,15 +7,10 @@ WriteLine("Hello from .NET!");
 
 MainFromRoc(out var rocStr);
 
-var disposableString = RocStrRead(rocStr);
+WriteLine(rocStr);
 
-WriteLine(disposableString.ToString());
-
-public static unsafe partial class Platform
+public static partial class Platform
 {
-    public static ReadOnlySpan<char> RocStrRead(RocStr rocStr) =>
-        Encoding.UTF8.GetString(rocStr.Bytes, (int)rocStr.Len.ToUInt32());
-
     [LibraryImport("interop", EntryPoint = "roc__mainForHost_1_exposed_generic")]
     internal static partial void MainFromRoc(out RocStr rocStr);
 }
@@ -25,4 +20,13 @@ public unsafe struct RocStr
     public byte* Bytes;
     public UIntPtr Len;
     public UIntPtr Capacity;
+    
+    public ReadOnlySpan<char> ToCharSpan() =>
+        Encoding.UTF8.GetString(Bytes, (int)Len.ToUInt32());
+
+    public override string ToString() 
+        => ToCharSpan().ToString();
+    
+    public static implicit operator string(RocStr rocStr) 
+        => rocStr.ToString();
 }
