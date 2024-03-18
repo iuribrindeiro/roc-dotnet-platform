@@ -1,15 +1,33 @@
 # roc-dotnet-platform
-DotNet platform for the [Roc](https://www.roc-lang.org/) language
+DotNet platform example for the [Roc](https://www.roc-lang.org/) language
+
+How to run it:
+
+1. Build the roc app using the roc platform under the root:
+
+```cli
+roc build main.roc --lib --output ./platform/interop
+```
+This will produce a shared library file that we'll be able to import from a .NET context.
+See: https://github.com/iuribrindeiro/roc-dotnet-platform/blob/main/platform/Program.cs#L14
+
+2. `cd` into the `platform` folder and run:
+```cli
+dotnet run
+```
+
+This should print the message under the `roc.main` file bound to the expression name `main`.
+See: https://github.com/iuribrindeiro/roc-dotnet-platform/blob/main/main.roc#L6
 
 
-The goal here is to learn a bit about C ABI with .NET while also playing with a purely functional language like Roc.
+If you want to build the app using native AOT:
 
-Roc has this amazign concept of [Platform](https://www.roc-lang.org/platforms), which allow us to choose 
-where we wanna run roc on.
+1. Publish the dotnet app
+```cli
+dotnet publish -c Release
+```
 
-I chose to run it over .NET since I have most experience with it and would be really nice to play with 
-exporting native code from C# code. I'm using [DNNE](https://github.com/AaronRobinsonMSFT/DNNE?tab=readme-ov-file) 
-to do so.
-
-If I'm able to make this work, I'll probably open a PR with it to use as a .NET platform 
-[example for Roc](https://github.com/roc-lang/examples/tree/main/examples)
+2. `cd` into the into the `publish` folder and run the binary:
+```cli
+./DotNetRocPlatform
+```
