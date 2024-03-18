@@ -4,39 +4,36 @@ using System.Text;
 
 namespace DotNetRocPlatform;
 
-public static partial class Platform
+public static unsafe partial class Platform
 {
-    public static unsafe string RocStrRead(RocStr rocStr)
-    {
-        //not sure why, but when converting from UIntPtr to long, it becomes negative
-        if ((long)rocStr.capacity < 0)
-        {
-            // Small string
-            int byteLen = IntPtr.Size == 8 ? 24 : 12;
-            byte[] bytes = new byte[byteLen];
-            //getting the actual reference to the rocStr, converting it to a IntPtr
-            //and then copying its byte array content to `bytes` seems to work,
-            //but using the actual instance .bytes doesnt.
-            //I still need to understand what is the .bytes and why is it differnet from (IntPtr)(&rocStr)
-            Marshal.Copy((IntPtr)(&rocStr), bytes, 0, byteLen);
-            int lenSmall = bytes[byteLen - 1] ^ 128;
-            return Encoding.ASCII.GetString(bytes, 0, lenSmall);
-        }
-
-        // Remove the bit for seamless string
-        long len = (long)((rocStr.len << 1) >> 1);
-        byte[] longStr = new byte[len];
-        Marshal.Copy(rocStr.bytes, longStr, 0, (int)len);
-        return Encoding.UTF8.GetString(longStr);
-    }
+    public static DisposableString RocStrRead(RocStr* rocStr) =>
+        Encoding.UTF8.GetString(rocStr->bytes, (int)rocStr->len.ToUInt32());
 
     [LibraryImport("interop", EntryPoint = "roc__mainForHost_1_exposed_generic")]
     internal static partial void MainFromRoc(out RocStr rocStr);
 }
 
+//Just to make the use of strings read from Roc easy to free from memory
+public readonly unsafe record struct DisposableString : IDisposable
+{
+    public required string Value { get; init; }
+
+    public static implicit operator DisposableString(Span<char> value) =>
+        new() { Value = value.ToString() };
+
+    public static implicit operator DisposableString(string value) => new() { Value = value };
+
+    public void Dispose() => Marshal.FreeHGlobal(Marshal.StringToHGlobalAnsi(Value));
+
+    public override string ToString() => Value;
+
+    public static implicit operator string(DisposableString disposableString) =>
+        disposableString.Value;
+}
+
 public unsafe struct RocStr
 {
-    public IntPtr bytes;
+    public byte* bytes;
     public UIntPtr len;
     public UIntPtr capacity;
 }

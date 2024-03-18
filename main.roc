@@ -3,4 +3,4 @@ app "dotnetapp"
     imports []
     provides [main] to platform
 
-main = "hi from roc from C#"
+main = "Hi from roc! (in a .NET platform) 🔥🦅🔥"

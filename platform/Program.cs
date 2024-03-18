@@ -1,7 +1,7 @@
 ﻿using System;
 using DotNetRocPlatform;
 
-internal class Program
+internal unsafe class Program
 {
     private static unsafe void Main(string[] _)
     {
@@ -9,6 +9,13 @@ internal class Program
 
         Platform.MainFromRoc(out var rocStr);
 
-        Console.WriteLine(Platform.RocStrRead(rocStr));
+        PrintRocStr(rocStr);
+    }
+
+    private static void PrintRocStr(RocStr rocStr)
+    {
+        using var disposableString = Platform.RocStrRead(&rocStr);
+
+        Console.WriteLine(disposableString);
     }
 }
