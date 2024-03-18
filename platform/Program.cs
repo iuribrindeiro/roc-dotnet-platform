@@ -1,21 +1,28 @@
-﻿using System;
-using DotNetRocPlatform;
+﻿using System.Runtime.InteropServices;
+using System.Text;
+using static System.Console;
+using static Platform;
 
-internal unsafe class Program
+WriteLine("Hello from .NET!");
+
+MainFromRoc(out var rocStr);
+
+var disposableString = RocStrRead(rocStr);
+
+WriteLine(disposableString.ToString());
+
+public static unsafe partial class Platform
 {
-    private static unsafe void Main(string[] _)
-    {
-        Console.WriteLine("Hello from .NET!");
+    public static ReadOnlySpan<char> RocStrRead(RocStr rocStr) =>
+        Encoding.UTF8.GetString(rocStr.Bytes, (int)rocStr.Len.ToUInt32());
 
-        Platform.MainFromRoc(out var rocStr);
+    [LibraryImport("interop", EntryPoint = "roc__mainForHost_1_exposed_generic")]
+    internal static partial void MainFromRoc(out RocStr rocStr);
+}
 
-        PrintRocStr(rocStr);
-    }
-
-    private static void PrintRocStr(RocStr rocStr)
-    {
-        using var disposableString = Platform.RocStrRead(&rocStr);
-
-        Console.WriteLine(disposableString);
-    }
+public unsafe struct RocStr
+{
+    public byte* Bytes;
+    public UIntPtr Len;
+    public UIntPtr Capacity;
 }
