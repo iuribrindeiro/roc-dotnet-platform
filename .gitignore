@@ -1,5 +1,7 @@
-platform/obj
-platform/bin
+**/obj
+**/bin
 
 platform/.idea
 main
+platform/publish
+Exports/build

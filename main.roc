@@ -1,6 +1,7 @@
 app "dotnetapp"
-    packages { platform: "./platform/roc_platform.roc" }
-    imports []
-    provides [main] to platform
+    packages { pf: "./platform/platform.roc" }
+    imports [pf.Console]
+    provides [main] to pf
 
-main = "Hi from roc! (in a .NET platform) 🔥🦅🔥"
+main = 
+    Console.writeLine "Hi from roc! (in a .NET platform) 🔥🦅🔥" 
